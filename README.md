@@ -127,9 +127,9 @@ starting parameters and bounds
 #### Fit the model and test it on hold-out data
 
 ```bash
-python ../bin/fit_plum_simulated-annealing.py --training_data train0_training-data_small_multivariate.csv 
---test_data test0_training-data_small_multivariate.csv --treefile unikont_tree.nhx 
---paramfile mvgaussian.param --job_name test0 --criterion likelihood --start_temp 1.0 
+python ../bin/fit_plum_simulated-annealing.py --training_data train0_training-data_small_multivariate.csv \
+--test_data test0_training-data_small_multivariate.csv --treefile unikont_tree.nhx \
+--paramfile mvgaussian.param --job_name test0 --criterion likelihood --start_temp 1.0 \
 --alpha .3 --temp_steps 5 --mutation_sd .3
 ```
 
@@ -177,7 +177,7 @@ Now we can predict using our terrible model above, but first we should sort our 
 head -n1 training-data_small_multivariate.csv >> training-data_small_multivariate.sorted.csv
 grep -v "data" training-data_small_multivariate.csv | sort -t, -k1,2 >> training-data_small_multivariate.sorted.csv
 
-python ../bin/predict_plum.py --datafile training-data_small_multivariate.sorted.csv --treefile unikont_tree.nhx 
+python ../bin/predict_plum.py --datafile training-data_small_multivariate.sorted.csv --treefile unikont_tree.nhx \
 --paramfile test0_params.txt --outfile test0_prediction.csv --as_sorted
 ```
 
