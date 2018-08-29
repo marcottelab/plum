@@ -1,0 +1,8 @@
+# Error Model
+Name: MultivariateGaussian
+Params: mean0=[0,0]; sigma0=1; mean1=[.5,.5]; sigma1=1
+Bounds: mean0=(-1,1); sigma0=(-1,2); mean1=(-1,1); sigma1=(-1,2)
+
+# Markov Model
+Name: TwoState
+Params: alpha=.01; beta=.1

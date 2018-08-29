@@ -1,0 +1,8 @@
+# Error Model
+Name: Gaussian
+Params: mean0=0; sd0=1; mean1=0; sd1=1
+Bounds: mean0=(-1,1); sd0=(0,2); mean1=(-1,1); sd1=(0,2)
+
+# Markov Model
+Name: TwoState
+Params: alpha=.01; beta=.1
