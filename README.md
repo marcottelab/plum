@@ -2,6 +2,7 @@
 
 ***Generalizable phylogenetic latent variable models for ancestral network reconstruction***
 
+![](https://zenodo.org/badge/DOI/10.5281/zenodo.1406146.svg)
 ---------------
 
 ## Citations
