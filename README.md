@@ -47,6 +47,8 @@ cd plum
 python setup.py build_ext --inplace
 ```
 
+Note that if you use this option you will have to add plum and its subdirectories to your PATH and PYTHONPATH
+
 #### If you want to install it
 ```bash
 python setup.py build_ext
