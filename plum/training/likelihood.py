@@ -231,12 +231,17 @@ class simulated_annealing(plumLikelihood):
     -`mutation_sd`: Standard deviation of the sampling distribution (a Gaussian)
     '''
     
-    def __init__(self,markov_model,error_model,tree,data,start_temp=1, alpha=.9, temp_steps=10, mutation_sd=.5):
+    def __init__(self,markov_model,error_model,tree,data,start_temp=1, alpha=.9, temp_steps=10, mutation_sd=.5, random_seed=False):
         plumLikelihood.__init__(self,markov_model,error_model,tree,data)
         self.start_temp = start_temp
         self.alpha = alpha
         self.temp_steps = temp_steps
         self.mutation_sd = mutation_sd
+        if random_seed != False:
+            self.random_seed = random_seed
+        else:
+            assert isinstance(random_seed, int), "random seed must be an int"
+            self.random_seed = -1
         
     def _run_calc(self,param_array):
         self._update_all(param_array)
@@ -289,10 +294,10 @@ class simulated_annealing(plumLikelihood):
         pvec = np.array(self._param_vec)
         if self.is_multivariate:
             best_params, best_score = _simulated_annealing_multivariate(self._run_calc, pvec, self._param_boundVec, 
-                                                    self.start_temp, self.alpha, self.temp_steps, self.mutation_sd)
+                                                    self.start_temp, self.alpha, self.temp_steps, self.mutation_sd, self.random_seed)
         else:
             best_params, best_score = _simulated_annealing(self._run_calc, pvec, self._param_boundVec, 
-                                                            self.start_temp, self.alpha, self.temp_steps, self.mutation_sd)
+                                                            self.start_temp, self.alpha, self.temp_steps, self.mutation_sd, self.random_seed)
         self.best_params = dict(list(zip(self.freeParams,best_params)))
         self.best_logL = best_score
         

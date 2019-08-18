@@ -9,7 +9,7 @@ from libc.math cimport exp
 
 ## Functions for fitting models
 
-cdef c_simulated_annealing(object function, np.ndarray[np.float64_t,ndim=1] param_vec, tuple bounds, double start_temp=1, double alpha=9, int temp_steps=10, double mutation_sd=.5):
+cdef c_simulated_annealing(object function, np.ndarray[np.float64_t,ndim=1] param_vec, tuple bounds, double start_temp=1, double alpha=9, int temp_steps=10, double mutation_sd=.5, int random_seed=-1):
     '''Fit model by simulated annealing
      - `function`: Something that maximizes something
      - `param_vec`: np.ndarray of initial parameter values
@@ -17,6 +17,7 @@ cdef c_simulated_annealing(object function, np.ndarray[np.float64_t,ndim=1] para
      - `start_temp`: Starting temperature for annealing. Defaults to 1
      - `alpha`: Proportion to decrement T by for each round
      - `temp_steps`: Number of steps to take within each temperature iteration
+     - `random_seed`: int to seed randomness below. -1 doesn't seed the randomness.
     '''
     
     cdef:
@@ -35,6 +36,9 @@ cdef c_simulated_annealing(object function, np.ndarray[np.float64_t,ndim=1] para
         np.ndarray[np.float64_t,ndim=1] new_param_vec
         np.ndarray[np.float64_t,ndim=1] current_params = copy.deepcopy(param_vec) # stores current parameters
         np.ndarray[np.float64_t,ndim=1] best_params = np.zeros(param_vec.shape[0])# best set of parameters
+    
+    if random_seed != -1:
+        np.random.seed(random_seed)
     
     randint = np.random.randint
     normal = np.random.normal
@@ -82,7 +86,7 @@ cdef c_simulated_annealing(object function, np.ndarray[np.float64_t,ndim=1] para
         print "\t".join( ["Current temp: {}".format(T), "Best score: {}".format(best), "Accept rate at this T: {}".format(accept_rate)] )
     return best_params, best
     
-cdef c_simulated_annealing_multivariate(object function, np.ndarray[object,ndim=1] param_vec, tuple bounds, double start_temp=1, double alpha=9, int temp_steps=10, double mutation_sd=.5):
+cdef c_simulated_annealing_multivariate(object function, np.ndarray[object,ndim=1] param_vec, tuple bounds, double start_temp=1, double alpha=9, int temp_steps=10, double mutation_sd=.5, int random_seed=-1):
     '''Fit multivariate model by simulated annealing
      - `function`: Something that maximizes something
      - `param_vec`: np.ndarray of initial parameter values
@@ -90,6 +94,7 @@ cdef c_simulated_annealing_multivariate(object function, np.ndarray[object,ndim=
      - `start_temp`: Starting temperature for annealing. Defaults to 1
      - `alpha`: Proportion to decrement T by for each round
      - `temp_steps`: Number of steps to take within each temperature iteration
+     - `random_seed`: int to seed randomness below. -1 doesn't seed the randomness.
     '''
     
     cdef:
@@ -110,6 +115,9 @@ cdef c_simulated_annealing_multivariate(object function, np.ndarray[object,ndim=
         np.ndarray[object,ndim=1] new_param_vec
         np.ndarray[object,ndim=1] current_params = copy.deepcopy(param_vec) # stores current parameters
         np.ndarray[object,ndim=1] best_params = copy.deepcopy(param_vec)# best set of parameters
+    
+    if random_seed != -1:
+        np.random.seed(random_seed)
     
     randint = np.random.randint
     normal = np.random.normal
@@ -218,7 +226,7 @@ cdef c_simulated_annealing_multivariate(object function, np.ndarray[object,ndim=
         print "\t".join( ["Current temp: {}".format(T), "Best score: {}".format(best), "Accept rate at this T: {}".format(accept_rate)] )
     return best_params, best
     
-def _simulated_annealing(function, param_vec, bounds, start_temp=1, alpha=.9, temp_steps=10, mutation_sd=.5):
+def _simulated_annealing(function, param_vec, bounds, start_temp=1, alpha=.9, temp_steps=10, mutation_sd=.5, random_seed=-1):
     '''Fit model by simulated annealing
      - `function`: Something that maximizes something
      - `param_vec`: np.ndarray of initial parameter values
@@ -226,12 +234,13 @@ def _simulated_annealing(function, param_vec, bounds, start_temp=1, alpha=.9, te
      - `start_temp`: Starting temperature for annealing. Defaults to 1
      - `alpha`: Proportion to decrement T by for each round
      - `temp_steps`: Number of steps to take within each temperature iteration
+     - `random_seed`: int to seed randomness below. -1 doesn't seed the randomness.
     '''
     assert len(param_vec) > 0, "`param_vec` must not be empty"
     assert len(bounds) == len(param_vec), "Bounds and param_vec must be same length"
-    return c_simulated_annealing(function, param_vec, bounds, start_temp, alpha, temp_steps, mutation_sd)
+    return c_simulated_annealing(function, param_vec, bounds, start_temp, alpha, temp_steps, mutation_sd, random_seed)
     
-def _simulated_annealing_multivariate(function, param_vec, bounds, start_temp=1, alpha=.9, temp_steps=10, mutation_sd=.5):
+def _simulated_annealing_multivariate(function, param_vec, bounds, start_temp=1, alpha=.9, temp_steps=10, mutation_sd=.5, random_seed=-1):
     '''Fit multivariate model by simulated annealing
      - `function`: Something that maximizes something
      - `param_vec`: np.ndarray of initial parameter values
@@ -239,10 +248,11 @@ def _simulated_annealing_multivariate(function, param_vec, bounds, start_temp=1,
      - `start_temp`: Starting temperature for annealing. Defaults to 1
      - `alpha`: Proportion to decrement T by for each round
      - `temp_steps`: Number of steps to take within each temperature iteration
+     - `random_seed`: int to seed randomness below. -1 doesn't seed the randomness.
     '''
     assert len(param_vec) > 0, "`param_vec` must not be empty"
     assert len(bounds) == len(param_vec), "Bounds and param_vec must be same length"
-    return c_simulated_annealing_multivariate(function, param_vec, bounds, start_temp, alpha, temp_steps, mutation_sd)
+    return c_simulated_annealing_multivariate(function, param_vec, bounds, start_temp, alpha, temp_steps, mutation_sd, random_seed)
     
 def sim_anneal_test(function, param_vec, bounds, start_temp=1, alpha=.9, temp_steps=10):
     

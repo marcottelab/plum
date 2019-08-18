@@ -95,7 +95,7 @@ A few extra notes:
 First, navigate to testdata, which has some data sets and parameter files for you to try out
 
 ```bash
-python ../bin/split_plum_training-data.py --infile training-data_small_multivariate.csv --fold 2
+python ../bin/split_plum_training-data.py --infile training-data_small_multivariate.csv --fold 2 --random_seed 2112
 ```
 
 This will write:
@@ -133,7 +133,7 @@ starting parameters and bounds
 python ../bin/fit_plum_simulated-annealing.py --training_data train0_training-data_small_multivariate.csv \
 --test_data test0_training-data_small_multivariate.csv --treefile unikont_tree.nhx \
 --paramfile mvgaussian.param --job_name test0 --criterion likelihood --start_temp 1.0 \
---alpha .3 --temp_steps 5 --mutation_sd .3
+--alpha .3 --temp_steps 5 --mutation_sd .3 --random_seed 2001
 ```
 
 This will fit a PLVM using the MultivariateGaussian and the standard TwoState Markov model (both of which are specified
@@ -149,20 +149,19 @@ After fitting, there will be four new files in testdata/
     test0_trainPRC.csv
 ```
  
-_params.txt contains the fit parameters and comments that tell you about the fit. Here's what mine looks like:
+_params.txt contains the fit parameters and comments that tell you about the fit. Here's what it looks like:
 
-```bash
-// Training set train0_training-data_small_multivariate.csv
+```bash// Training set train0_training-data_small_multivariate.csv
 // Criterion: likelihood
-// Training best score: -263.890842938
-// Test best average precision score: 0.0881418942533
+// Training best score: -242.37015280420815
+// Test best average precision score: 0.12853174603174602
 # Error Model
 Name: MultivariateGaussian
-Params: mean0=[0.19033966293739998, 0.01117662571935278];sigma0=[[1.0, -0.5478893507714943], [-0.5478893507714943, 0.56304722043422]];mean1=[0.05504330013754061, -0.06514285186851157];sigma1=[[0.6530801758523388, 0.5071404781048408], [0.5071404781048408, 1.0]]
+Params: mean0=[0.09271652962259244, 0.15133451340886617];sigma0=[[1.0, -0.8780918018636823], [-0.8780918018636823, 1.0]];mean1=[0.39235386064996314, 0.19154441337520783];sigma1=[[0.4682611089433504, 0.3554577482681259], [0.3554577482681259, 0.6223605063177067]]
 
 # Markov Model
 Name: TwoState
-Params: alpha=0.01;beta=0.654341332952
+Params: alpha=0.24970275115394253;beta=0.19244346977974788
 ```
 
 Obviously this is a terrible fit, but we don't expect much on this tiny dataset with such an insufficient fitting procedure.
@@ -184,18 +183,22 @@ python ../bin/predict_plum.py --datafile training-data_small_multivariate.sorted
 --paramfile test0_params.txt --outfile test0_prediction.csv --as_sorted
 ```
 
-This produces the finished results with predictions at interior nodes
+This produces the finished results with predictions at interior nodes. The top of the file looks like this
 
-| ID1         | ID2         | node             | P_1              | P_event          | known_state | 
-|-------------|-------------|------------------|------------------|------------------|-------------| 
-| ENOG4102NDK | ENOG4104K0S | Unikonts         | 0.0119673220697  | 0.0              |             | 
-| ENOG4102NDK | ENOG4104K0S | Euarchontoglires | 0.00221244218068 | 0.00631175279897 |             | 
-| ENOG4102NDK | ENOG4104K0S | Dm               | 0.0120762595083  | 0.00189947541066 |             | 
-| ENOG4102NDK | ENOG4104K0S | Xl               | 0.0194883296436  | 0.0109641346639  |             | 
-| ENOG4102NDK | ENOG4104K0S | Mm               | 0.00295623738354 | 0.00074379520286 |             | 
-| ENOG4102NDK | ENOG4104K0S | Hs               | 0.0              | 0.00221244218068 | 0           | 
-| ENOG4102NDK | ENOG4104K0S | Dd               | 0.0144985921622  | 0.00253127009253 |             | 
-| ENOG4102NDK | ENOG4104K0S | Sp               | 0.0124215955469  | 0.00260440235976 |             | 
+|ID1        |ID2        |node            |P_1                |P_event             |known_state|
+|-----------|-----------|------------- --|-------------------|--------------------|-----------|
+|ENOG4102NDK|ENOG4104K0S|Unikonts        |0.4277910907412827 |0.0                 |           |
+|ENOG4102NDK|ENOG4104K0S|Opisthokonts    |0.4030955029650736 |0.02469558777620906 |           |
+|ENOG4102NDK|ENOG4104K0S|Sc              |0.4958592145259373 |0.09276371156086366 |           |
+|ENOG4102NDK|ENOG4104K0S|Eumetazoa       |0.38170506539670246|0.021390437568371168|           |
+|ENOG4102NDK|ENOG4104K0S|Bilateria       |0.37947037251042925|0.002234692886273204|           |
+|ENOG4102NDK|ENOG4104K0S|Deuterostomes   |0.3700163676208032 |0.009454004889626055|           |
+|ENOG4102NDK|ENOG4104K0S|Tetrapods       |0.3392019911771062 |0.030814376443697   |           |
+|ENOG4102NDK|ENOG4104K0S|Xl              |0.693888308641325  |0.3546863174642188  |           |
+|ENOG4102NDK|ENOG4104K0S|Euarchontoglires|0.09574458021994871|0.2434574109571575  |           |
+|ENOG4102NDK|ENOG4104K0S|Mm              |0.11400615359796604|0.01826157337801733 |           |
+|ENOG4102NDK|ENOG4104K0S|Hs              |0.0                |0.09574458021994871 |0          |
+
 
 `P_1` is the score at each node while `P_event` is the absolute difference between the score at this node and at
 the parental node. 

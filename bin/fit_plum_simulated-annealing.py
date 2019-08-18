@@ -25,6 +25,8 @@ parser.add_argument("--alpha", default=.9, type=float, help="Decrementing factor
 parser.add_argument("--temp_steps", default=10, type=int, help="Number of steps to take at each temperature")
 parser.add_argument("--mutation_sd", default=.5, type=float, help="Standard deviation of the sampling distribution (a Gaussian)")
 
+parser.add_argument("--random_seed", default=False, type=int, help="Random seed for simulated annealing algorithm")
+
 args = parser.parse_args()
 
 assert os.path.exists(args.training_data), "File not found: {}".format(args.training_data)
@@ -50,7 +52,8 @@ if args.criterion == 'recall-precision':
                                                                 start_temp=args.start_temp,
                                                                 alpha=args.alpha,
                                                                 temp_steps=args.temp_steps,
-                                                                mutation_sd=args.mutation_sd)
+                                                                mutation_sd=args.mutation_sd,
+                                                                random_seed=args.random_seed)
     print("Fitting model on {}".format(args.training_data))
     model.fit()
     fit_params = model.best_params
@@ -64,7 +67,8 @@ elif args.criterion == "likelihood":
                                                                 start_temp=args.start_temp,
                                                                 alpha=args.alpha,
                                                                 temp_steps=args.temp_steps,
-                                                                mutation_sd=args.mutation_sd)
+                                                                mutation_sd=args.mutation_sd,
+                                                                random_seed=args.random_seed)
     print("Fitting model on {}".format(args.training_data))
     likelihood_model.fit()
     fit_params = likelihood_model.best_params
@@ -82,7 +86,8 @@ else:
                                                                 start_temp=args.start_temp,
                                                                 alpha=args.alpha,
                                                                 temp_steps=args.temp_steps,
-                                                                mutation_sd=args.mutation_sd)
+                                                                mutation_sd=args.mutation_sd,
+                                                                random_seed=args.random_seed)
     print("Fitting model on {}".format(args.training_data))
     likelihood_model.fit()
     fit_params = likelihood_model.best_params

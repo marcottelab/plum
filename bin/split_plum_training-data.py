@@ -8,6 +8,7 @@ parser = argparse.ArgumentParser(description='Split a gold standard set for use 
 parser.add_argument("--infile", required=True, help="datafile with columns [ID1, ID2, species, data, state]")
 parser.add_argument("--fold", required=True, default=5, type=int, help="How many chunks to split data into")
 parser.add_argument("--species_filter", default=1, type=int, help="Delete pairs present in fewer than this many species. Writes a csv file of these groups")
+parser.add_argument("--random_seed", default=False, type=int, help="Random seed for splits (default=False)")
 args = parser.parse_args()
 
 
@@ -15,6 +16,9 @@ if "/" in args.infile: # is a path
     infile_name = args.infile.split("/")[-1]
 else:
     infile_name = args.infile
+    
+if args.random_seed != False:
+    np.random.seed(args.random_seed)
     
     
 # Read in data and drop down to knowns
