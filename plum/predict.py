@@ -25,7 +25,7 @@ class node_probabilities(plumData):
         self._tree = dendropy.Tree.get_from_path(tree,'newick',preserve_underscores=True,suppress_internal_node_taxa=False,rooting='default-rooted')
         self._em = error_model
         self._mm = markov_model
-        self._state_priors = dict(zip(*self._mm.stationaryFrequencies))  
+        self._state_priors = dict(list(zip(*self._mm.stationaryFrequencies)))  
         assert type(as_sorted) == bool, "`as_sorted` must be True or False"
         self.as_sorted = as_sorted
         
@@ -33,7 +33,7 @@ class node_probabilities(plumData):
         '''Cast to np.float64 with np.nan as default if input can't be so cast'''
         try:
             return np.float64(value)
-        except ValueError, TypeError:
+        except ValueError as TypeError:
             if type(value) is list:
                 a = np.empty( (len(value),) )
                 a.fill(np.nan)
@@ -53,14 +53,14 @@ class node_probabilities(plumData):
         get_known = lambda x: np.nan if x == '' else int(float(x))
         if self.as_sorted == False:
             plumData.__init__(self,markov_model=self._mm,error_model=self._em,tree=self._tree,data=self._data)
-            for dataD, knownD, pair in itertools.izip(self._featureDs, self._knownknownDs, self._pairs):
+            for dataD, knownD, pair in zip(self._featureDs, self._knownknownDs, self._pairs):
                 nodeprobs,transitionprobs = getNodeProbsAndTransitions(tree=self._tree,
                                         dataD=dataD,
                                         knownD=knownD,
                                         error_model=self._error_model,
                                         markov_model=self._markov_model,
                                         priors=self._state_priors)
-                for node, prob in nodeprobs.iteritems():
+                for node, prob in nodeprobs.items():
                     yield pair, node, prob[1]
         else:
             with open(self._data) as f:
@@ -81,7 +81,7 @@ class node_probabilities(plumData):
                                                  error_model=self._em,
                                                  markov_model=self._mm,
                                                  priors=self._state_priors)
-                        for node,prob in nodeprobs.iteritems():
+                        for node,prob in nodeprobs.items():
                             if node in transitionprobs:
                                 tprob = transitionprobs[node]
                             else:
@@ -104,7 +104,7 @@ class node_probabilities(plumData):
                                         error_model=self._em,
                                         markov_model=self._mm,
                                         priors=self._state_priors)
-                for node,prob in nodeprobs.iteritems():
+                for node,prob in nodeprobs.items():
                     if node in transitionprobs:
                         tprob = transitionprobs[node]
                     else:
@@ -122,5 +122,5 @@ class node_probabilities(plumData):
                 out.write(",".join([ pair_string, node, str(prob), str(tprob), self._safe_str_cast(state) ]) + "\n")
                 count += 1
                 if count % 1000 == 0:
-                    print count
+                    print(count)
         

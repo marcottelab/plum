@@ -71,9 +71,9 @@ class TwoStateSim():
         states = pd.DataFrame(self._node_states)
         switches = pd.DataFrame(self._node_switches)
         data = pd.DataFrame(self._leaf_data)
-        states["site"] = range(len(states))
-        switches["site"] = range(len(switches))
-        data["site"] = range(len(data))
+        states["site"] = list(range(len(states)))
+        switches["site"] = list(range(len(switches)))
+        data["site"] = list(range(len(data)))
         taxa = [t.label for t in self._tree.taxon_namespace]
         tidy_states = pd.melt(states,id_vars=['site'],
                     value_vars=taxa,var_name='node',value_name='state').set_index(["site",'node'])
@@ -101,7 +101,7 @@ class TwoStateSim():
             tips.drop(['site',"switch"],inplace=True,axis=1)
             tips["ID1"] = self.output["site"]
             tips["ID2"] = self.output["site"]
-            tip_taxa = map(lambda x: x.taxon.label,self._tree.leaf_node_iter())
+            tip_taxa = [x.taxon.label for x in self._tree.leaf_node_iter()]
             self.tip_data = tips[tips.node.isin(tip_taxa)][["ID1","ID2","node"] + [c for c in tips.columns if "data" in c] + ["state"]]
             self.tip_data.columns = [["ID1","ID2","species"] + [c for c in tips.columns if "data" in c] + ["state"]]
             
@@ -127,16 +127,16 @@ class TwoStateSim():
         for n in self._tree.preorder_node_iter():
             assert n.taxon != None, "Nodes must have associated taxon objects"
             if n == self._tree.seed_node: # is root
-                print "Drawing initial states at root"
+                print("Drawing initial states at root")
                 current_states = self._draw_root_states()
                 switch_vec = np.array([np.nan]*self.nchars)
             else:
-                print "Evolving to node {}".format(n.taxon.label)
+                print("Evolving to node {}".format(n.taxon.label))
                 current_states, switch_vec = branch_evol(self._node_states[n.parent_node.taxon.label],n.edge_length)
             if n.is_leaf():
                 if self._error_model.is_multivariate:
                     # tuple-ize multivariate data so it can be loaded into single dataframe column in format_output.
-                    self._leaf_data[n.taxon.label] = map(tuple,error_vec(current_states))
+                    self._leaf_data[n.taxon.label] = list(map(tuple,error_vec(current_states)))
                 else:
                     self._leaf_data[n.taxon.label] = error_vec(current_states)
             self._node_states[n.taxon.label] = current_states
