@@ -186,7 +186,7 @@ python ../bin/predict_plum.py --datafile training-data_small_multivariate.sorted
 This produces the finished results with predictions at interior nodes. The top of the file looks like this
 
 |ID1        |ID2        |node            |P_1                |P_event             |known_state|
-|-----------|-----------|------------- --|-------------------|--------------------|-----------|
+|-----------|-----------|----------------|-------------------|--------------------|-----------|
 |ENOG4102NDK|ENOG4104K0S|Unikonts        |0.4277910907412827 |0.0                 |           |
 |ENOG4102NDK|ENOG4104K0S|Opisthokonts    |0.4030955029650736 |0.02469558777620906 |           |
 |ENOG4102NDK|ENOG4104K0S|Sc              |0.4958592145259373 |0.09276371156086366 |           |
