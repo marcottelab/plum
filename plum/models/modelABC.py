@@ -1,11 +1,9 @@
 import abc
 
-class Model(object):
+class Model(object, metaclass=abc.ABCMeta):
     '''
     Base class for two-state Markov models and error models.
     '''
-    
-    __metaclass__ = abc.ABCMeta
     
     ## Class attributes ##
     

@@ -27,17 +27,17 @@ outfile = open(args.out_file, 'w')
 outfile.write( ",".join( ["datafile", "model type", "paramfile", "APS"]  ) + "\n" )
 for mname in models:
     is_first = True
-    print "Model: {}".format(mname)
+    print("Model: {}".format(mname))
     for d in args.data_files:
         datafile = ".".join( d.split("/")[-1].split(".")[:-1] )
-        print "Datafile: {}".format(datafile)
-        for fname,(em,mm) in models[mname].iteritems():
+        print("Datafile: {}".format(datafile))
+        for fname,(em,mm) in models[mname].items():
             if is_first:
                 model = plum.training.recall_precision.plumRecallPrecision(error_model=em,markov_model=mm,tree=args.tree_file,data=d)
                 is_first = False
             else:
                 paramD = copy.deepcopy( em.freeParamDict )
-                print "Updating model from {}".format(fname)
+                print("Updating model from {}".format(fname))
                 paramD.update( copy.deepcopy( mm.freeParamDict ) )
                 model.update_from_dict(paramD)
             

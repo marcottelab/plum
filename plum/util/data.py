@@ -44,7 +44,7 @@ class plumData(object):
         self._em_param_names = self._error_model.freeParams # list
         self._markov_model = copy.deepcopy(markov_model)
         self._mm_param_names = self._markov_model.freeParams # list
-        self._equil_freqs = dict(zip(markov_model.stationaryFrequencies[0],markov_model.stationaryFrequencies[1]))
+        self._equil_freqs = dict(list(zip(markov_model.stationaryFrequencies[0],markov_model.stationaryFrequencies[1])))
         self._states = self._error_model.states # asserted above that err and markov states are the same
 
         self._free_params = copy.deepcopy(self._error_model.freeParams + self._markov_model.freeParams) # list
@@ -60,7 +60,7 @@ class plumData(object):
         self._paramD.update(self._markov_model._params)
         self._param_vec = [self._paramD[p] for p in self._free_params] # serve as starting params, will be updated during optim.
         
-        self._start_params = dict(zip(self._free_params,self._param_vec)) # will stay the same
+        self._start_params = dict(list(zip(self._free_params,self._param_vec))) # will stay the same
         self._all_params = None
 
         if type(tree) is str: # tree should be a path to a file if it's a string
@@ -77,7 +77,7 @@ class plumData(object):
             assert os.path.isfile(data), "Can't find datafile {}".format(data)
             
             if as_sorted == False:
-                print "Loading dataframe"
+                print("Loading dataframe")
                 self._dataframe = pd.read_csv(data)
                 self._features = self._dataframe.columns[3:-1]
                 if len(self._features) == 1:
@@ -152,10 +152,10 @@ class plumData(object):
     def _load_data(self, as_sorted=False, infile=None):
         '''Load in data file.''' 
         if as_sorted == False:
-            print "Parsing unsorted dataframe"
+            print("Parsing unsorted dataframe")
             grouped = self._dataframe.groupby(["ID1","ID2"])
             
-            group_parser = lambda group: ( dict(zip(group.species,group[self._features].values)), dict(zip(group.species,group.state)) )
+            group_parser = lambda group: ( dict(list(zip(group.species,group[self._features].values))), dict(list(zip(group.species,group.state))) )
             parsed = grouped.apply(group_parser)
             cols = np.asarray(list(parsed.values)) 
             
@@ -166,7 +166,7 @@ class plumData(object):
             assert len(self._featureDs) == len(self._knownLabelDs), "Error parsing datafile: data and known labels don't match"
             assert len(self._featureDs) > 0, "Error parsing datafile: no data were read in"
         else:
-            print "Parsing sorted data"
+            print("Parsing sorted data")
             self._featureDs, self._knownLabelDs, self._pairs = [],[],[]
             with open(infile) as f:
                 header = f.readline().strip().split(",")
@@ -191,14 +191,14 @@ class plumData(object):
 
                             try:
                                 if self._is_multivariate:
-                                    dataD[species] = map(float,line[3:-1])  # index on species
+                                    dataD[species] = list(map(float,line[3:-1]))  # index on species
                                 else:
                                     dataD[species] = float(line[3])
                                 if known_state == '':
                                     knownD[species] = np.nan
                                 else:
                                     knownD[species] = float(known_state) # index on species
-                            except ValueError, e:
+                            except ValueError as e:
                                 raise Exception("Improper type in feature or state column: {}".format(e))
                         else:
                             assert pair not in self._pairs, "{} found twice, data is not sorted!".format(pair)
@@ -212,28 +212,28 @@ class plumData(object):
                             assert species not in dataD and species not in knownD, "{} {} found twice".format(pair, species)
                             try:
                                 if self._is_multivariate:
-                                    dataD[species] = map(float,line[3:-1])  # index on species
+                                    dataD[species] = list(map(float,line[3:-1]))  # index on species
                                 else:
                                     dataD[species] = float(line[3])
                                 if known_state == '':
                                     knownD[species] = np.nan
                                 else:
                                     knownD[species] = float(known_state) # index on species
-                            except ValueError, e:
+                            except ValueError as e:
                                 raise Exception("Improper type in feature or state column: {}".format(e))
                     else:
                         
                         assert species not in dataD and species not in knownD, "{} {} found twice".format(pair, species)
                         try:
                             if self._is_multivariate:
-                                dataD[species] = map(float,line[3:-1])  # index on species
+                                dataD[species] = list(map(float,line[3:-1]))  # index on species
                             else:
                                 dataD[species] = float(line[3])
                             if known_state == '':
                                 knownD[species] = np.nan
                             else:
                                 knownD[species] = float(known_state) # index on species
-                        except ValueError, e:
+                        except ValueError as e:
                             raise Exception("Improper type in feature or state column: {}".format(e))
                             
                 # Load final pair
@@ -243,7 +243,7 @@ class plumData(object):
                 
             self._featureDs = np.array(self._featureDs)
             self._knownLabelDs = np.array(self._knownLabelDs)
-        print "Finished loading data"
+        print("Finished loading data")
         #if self.is_multivariate == False:
         del self._dataframe
           
@@ -344,7 +344,7 @@ def get_models_from_file(infile):
 
 def _bound_string(bounds):
     bound_string = []
-    for i,j in bounds.iteritems():
+    for i,j in bounds.items():
         jnew = []
         for x in j:
             if x == np.inf:
@@ -369,9 +369,9 @@ def write_parameter_file(outfile,error_model,markov_model):
         out.write("# Error Model\n")
         out.write("Name: {}\n".format(str(error_model).split(".")[-1]))
         if error_model.is_multivariate:
-            out.write( "Params: {}\n".format( ';'.join( ["=".join([i,str(j.tolist()).replace(" ","")]) for i,j in error_model.freeParamDict.iteritems()] ) ) )
+            out.write( "Params: {}\n".format( ';'.join( ["=".join([i,str(j.tolist()).replace(" ","")]) for i,j in error_model.freeParamDict.items()] ) ) )
         else:
-            out.write( "Params: {}\n".format( ';'.join( ["=".join([i,str(j)]) for i,j in error_model.freeParamDict.iteritems()] ) ) )
+            out.write( "Params: {}\n".format( ';'.join( ["=".join([i,str(j)]) for i,j in error_model.freeParamDict.items()] ) ) )
         if error_model.paramBounds != error_model._outer_bounds:
             bound_string = _bound_string(error_model.paramBounds)
             out.write("Bounds: {}\n\n".format( ';'.join(bound_string) ) )
@@ -380,7 +380,7 @@ def write_parameter_file(outfile,error_model,markov_model):
             
         out.write("# Markov Model\n")
         out.write("Name: {}\n".format(str(markov_model).split(".")[-1]))
-        out.write( "Params: {}\n".format( ';'.join( ["=".join([i,str(j)]) for i,j in markov_model.freeParamDict.iteritems()] ) ) )
+        out.write( "Params: {}\n".format( ';'.join( ["=".join([i,str(j)]) for i,j in markov_model.freeParamDict.items()] ) ) )
         if markov_model.paramBounds != markov_model._outer_bounds:
             bound_string = _bound_string(markov_model.paramBounds)
             out.write("Bounds: {}\n".format( ';'.join(bound_string) ) )

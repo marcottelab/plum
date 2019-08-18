@@ -19,7 +19,7 @@ parser.add_argument("--as_pickle",action='store_true',help="If flagged, pickle o
 args = parser.parse_args()
 
 ## Read in and create models
-print "Reading parameter file"
+print("Reading parameter file")
 em,mm = plum.util.data.get_models_from_file(args.param_file)
     
 tree = dendropy.Tree.get_from_path(args.tree,'newick',suppress_internal_node_taxa=False,

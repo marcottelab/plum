@@ -45,7 +45,7 @@ class Gaussian(Model,object):
     
     def __init__(self,mean0=0.,sd0=1.,mean1=0.,sd1=1.,freeparams = ["mean0","sd0","mean1","sd1"]):
     
-        loader = dict(zip(["mean0","sd0","mean1","sd1"],np.array([mean0,sd0,mean1,sd1],dtype=np.float64)))
+        loader = dict(list(zip(["mean0","sd0","mean1","sd1"],np.array([mean0,sd0,mean1,sd1],dtype=np.float64))))
         self._params = {}
         self.updateParams(loader)
         self._param_bounds = self._outer_bounds.copy()
@@ -53,7 +53,7 @@ class Gaussian(Model,object):
         
     def __repr__(self):
         '''Representation for evaluation'''
-        return "plum.models.ErrorModels.Gaussian({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.iteritems()) )
+        return "plum.models.ErrorModels.Gaussian({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.items()) )
     
     def __str__(self):
         return "plum.models.ErrorModels.Gaussian"
@@ -87,14 +87,14 @@ class Gaussian(Model,object):
 
     @paramBounds.setter
     def paramBounds(self,newbounds):
-        _ = [self._validateParam(p,value=None,bounds=bounds) for p,bounds in newbounds.iteritems()]
+        _ = [self._validateParam(p,value=None,bounds=bounds) for p,bounds in newbounds.items()]
         self._param_bounds.update(newbounds)
         
     def updateParams(self,newvalues):
         '''Update with new parameters.
             `newvalues` - a dictionary mapping parameter names to new values'''
         # update independent parameters
-        for name,val in newvalues.iteritems():
+        for name,val in newvalues.items():
             self._validateParam(name,value=val)
             self._params[name] = val
             
@@ -203,7 +203,7 @@ class GaussianMix(Gaussian):
 
     def __repr__(self):
         '''Representation for evaluation'''
-        return "plum.models.ErrorModels.GaussianMix({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.iteritems()) )
+        return "plum.models.ErrorModels.GaussianMix({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.items()) )
         
     def __str__(self):
         return "plum.models.ErrorModels.GaussianMix"
@@ -232,7 +232,7 @@ class GaussianMix(Gaussian):
         '''Update with new parameters.
             `newvalues` - a dictionary mapping parameter names to new values'''
         # update independent parameters
-        for name,val in newvalues.iteritems():
+        for name,val in newvalues.items():
             self._validateParam(name,value=val)
             self._params[name] = val
             if name == 'lambda1_1':
@@ -266,7 +266,7 @@ class Gumbel(Gaussian):
    
     def __repr__(self):
         '''Representation for evaluation'''
-        return "plum.models.ErrorModels.Gumbel({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.iteritems()) )
+        return "plum.models.ErrorModels.Gumbel({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.items()) )
         
     def __str__(self):
         return "plum.models.ErrorModels.Gumbel"
@@ -301,7 +301,7 @@ class GumbelMix(GaussianMix):
     
     def __repr__(self):
         '''Representation for evaluation'''
-        return "plum.models.ErrorModels.GumbelMix({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.iteritems()) )
+        return "plum.models.ErrorModels.GumbelMix({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.items()) )
         
     def __str__(self):
         return "plum.models.ErrorModels.GumbelMix"
@@ -345,7 +345,7 @@ class Gamma(Gaussian):
     
     def __init__(self,k0=0.,theta0=1.,k1=0.,theta1=1.,freeparams = ["k0","theta0","k1","theta1"]):
     
-        loader = dict(zip(["k0","theta0","k1","theta1"],np.array([k0,theta0,k1,theta1],dtype=np.float64)))
+        loader = dict(list(zip(["k0","theta0","k1","theta1"],np.array([k0,theta0,k1,theta1],dtype=np.float64))))
         self._params = {}
         self.updateParams(loader)
         self._param_bounds = self._outer_bounds.copy()
@@ -353,7 +353,7 @@ class Gamma(Gaussian):
 
     def __repr__(self):
         '''Representation for evaluation'''
-        return "plum.models.ErrorModels.Gamma({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.iteritems()) )
+        return "plum.models.ErrorModels.Gamma({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.items()) )
 
     def __str__(self):
         return "plum.models.ErrorModels.Gamma"
@@ -439,7 +439,7 @@ class GammaMix(GaussianMix):
 
     def __repr__(self):
         '''Representation for evaluation'''
-        return "plum.models.ErrorModels.GammaMix({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.iteritems()) )
+        return "plum.models.ErrorModels.GammaMix({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.items()) )
         
     def __str__(self):
         return "plum.models.ErrorModels.GammaMix"
@@ -482,7 +482,7 @@ class Cauchy(Gaussian):
     
     def __init__(self,loc0=0.,scale0=1.,loc1=0.,scale1=1.,freeparams = ["loc0","scale0","loc1","scale1"]):
     
-        loader = dict(zip(["loc0","scale0","loc1","scale1"],np.array([loc0,scale0,loc1,scale1],dtype=np.float64)))
+        loader = dict(list(zip(["loc0","scale0","loc1","scale1"],np.array([loc0,scale0,loc1,scale1],dtype=np.float64))))
         self._params = {}
         self.updateParams(loader)
         self._param_bounds = self._outer_bounds.copy()
@@ -490,7 +490,7 @@ class Cauchy(Gaussian):
 
     def __repr__(self):
         '''Representation for evaluation'''
-        return "plum.models.ErrorModels.Cauchy({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.iteritems()) )
+        return "plum.models.ErrorModels.Cauchy({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.items()) )
 
     def __str__(self):
         return "plum.models.ErrorModels.Cauchy"
@@ -532,7 +532,7 @@ class CauchyGumbel(Gaussian):
     
     def __init__(self,loc0=0.,scale0=1.,loc1=0.,scale1=1.,freeparams = ["loc0","scale0","loc1","scale1"]):
     
-        loader = dict(zip(["loc0","scale0","loc1","scale1"],np.array([loc0,scale0,loc1,scale1],dtype=np.float64)))
+        loader = dict(list(zip(["loc0","scale0","loc1","scale1"],np.array([loc0,scale0,loc1,scale1],dtype=np.float64))))
         self._params = {}
         self.updateParams(loader)
         self._param_bounds = self._outer_bounds.copy()
@@ -540,7 +540,7 @@ class CauchyGumbel(Gaussian):
 
     def __repr__(self):
         '''Representation for evaluation'''
-        return "plum.models.ErrorModels.CauchyGumbel({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.iteritems()) )
+        return "plum.models.ErrorModels.CauchyGumbel({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.items()) )
 
     def __str__(self):
         return "plum.models.ErrorModels.CauchyGumbel"
@@ -591,7 +591,7 @@ class MultivariateGaussian(Gaussian):
             sigma0 = np.eye( len(mean0) )
         if sigma1 is 1:
             sigma1 = np.eye( len(mean1) )
-        loader = dict(zip( ["mean0","sigma0","mean1","sigma1"], map(lambda x: np.array(x,dtype=np.float64), [mean0,sigma0,mean1,sigma1]) ))
+        loader = dict(list(zip( ["mean0","sigma0","mean1","sigma1"], [np.array(x,dtype=np.float64) for x in [mean0,sigma0,mean1,sigma1]] )))
         self._params = {}
         self.updateParams(loader)
         self._param_bounds = self._outer_bounds.copy()
@@ -599,7 +599,7 @@ class MultivariateGaussian(Gaussian):
         
     def __repr__(self):
         '''Representation for evaluation'''
-        return "plum.models.ErrorModels.MultivariateGaussian({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.iteritems()) )
+        return "plum.models.ErrorModels.MultivariateGaussian({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.items()) )
     
     def __str__(self):
         return "plum.models.ErrorModels.MultivariateGaussian"
@@ -613,7 +613,7 @@ class MultivariateGaussian(Gaussian):
     @paramBounds.setter
     def paramBounds(self,newbounds):
         assert type(newbounds) is dict, "`newbounds` must be type dict"
-        for p,bounds in newbounds.iteritems():
+        for p,bounds in newbounds.items():
             if type(bounds) is list:
                 bounds = np.array(bounds)
                 self._validateParam(p,value=None,bounds=bounds)
@@ -634,7 +634,7 @@ class MultivariateGaussian(Gaussian):
         # update independent parameters
         change_0 = False
         change_1 = False
-        for name,val in newvalues.iteritems():
+        for name,val in newvalues.items():
             if type(val) != np.ndarray:
                 val = np.array(val, dtype=np.float64)
             self._validateParam(name,value=val)
@@ -759,8 +759,8 @@ class MultivariateGaussianMixture(MultivariateGaussian):
         if sigma1_2 is 1:
             sigma1_2 = np.eye(len(mean0))
             
-        loader = dict(zip( ["mean0","sigma0","mean1_1","sigma1_1","mean1_2","sigma1_2"], 
-                            map(lambda x: np.array(x,dtype=np.float64), [mean0,sigma0,mean1_1,sigma1_1,mean1_2,sigma1_2]) ))
+        loader = dict(list(zip( ["mean0","sigma0","mean1_1","sigma1_1","mean1_2","sigma1_2"], 
+                            [np.array(x,dtype=np.float64) for x in [mean0,sigma0,mean1_1,sigma1_1,mean1_2,sigma1_2]] )))
         loader["lambda1_1"] = np.float64(lambda1_1)
         self._params = {}
         self.updateParams(loader)
@@ -769,7 +769,7 @@ class MultivariateGaussianMixture(MultivariateGaussian):
         
     def __repr__(self):
         '''Representation for evaluation'''
-        return "plum.models.ErrorModels.MultivariateGaussianMixture({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.iteritems()) )
+        return "plum.models.ErrorModels.MultivariateGaussianMixture({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.items()) )
     
     def __str__(self):
         return "plum.models.ErrorModels.MultivariateGaussianMixture"
@@ -781,7 +781,7 @@ class MultivariateGaussianMixture(MultivariateGaussian):
         change_0 = False
         change_1_1 = False
         change_1_2 = False
-        for name,val in newvalues.iteritems():
+        for name,val in newvalues.items():
             if type(val) is list:
                 val = np.array(val, dtype=np.float64)
             else:
@@ -920,7 +920,7 @@ class MultivariateGaussianDiagCov(MultivariateGaussian):
             sigmadiag0 = np.ones( len(mean0) )
         if sigmadiag1 is 1:
             sigmadiag1 = np.ones( len(mean1) )
-        loader = dict(zip( ["mean0","sigmadiag0","mean1","sigmadiag1"], map(lambda x: np.array(x,dtype=np.float64), [mean0,sigmadiag0,mean1,sigmadiag1]) ))
+        loader = dict(list(zip( ["mean0","sigmadiag0","mean1","sigmadiag1"], [np.array(x,dtype=np.float64) for x in [mean0,sigmadiag0,mean1,sigmadiag1]] )))
         self._params = { "sigma0": np.eye( len(mean0) ), "sigma1": np.eye( len(mean1) ) }
         self.updateParams(loader)
         self._param_bounds = self._outer_bounds.copy()
@@ -928,7 +928,7 @@ class MultivariateGaussianDiagCov(MultivariateGaussian):
         
     def __repr__(self):
         '''Representation for evaluation'''
-        return "plum.models.ErrorModels.MultivariateGaussianDiagCov({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.iteritems()) )
+        return "plum.models.ErrorModels.MultivariateGaussianDiagCov({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.items()) )
     
     def __str__(self):
         return "plum.models.ErrorModels.MultivariateGaussianDiagCov"
@@ -939,7 +939,7 @@ class MultivariateGaussianDiagCov(MultivariateGaussian):
         # update independent parameters
         change_0 = False
         change_1 = False
-        for name,val in newvalues.iteritems():
+        for name,val in newvalues.items():
             if type(val) != np.ndarray:
                 val = np.array(val, dtype=np.float64)
             self._validateParam(name,value=val)

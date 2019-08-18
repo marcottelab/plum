@@ -35,9 +35,9 @@ class plumLikelihood(plum.util.data.plumData):
         self._calc_L = ctreeL # vectorized version of _treeL
         self._blank_knownDs = np.array( [{}] * len(self._featureDs) )
         
-        print "Initializing model"
+        print("Initializing model")
         self._update_all(self._param_vec) # calculate initial state
-        print "Finished initializing model"
+        print("Finished initializing model")
         
     @property
     def markovModelParams(self):
@@ -89,12 +89,12 @@ class plumLikelihood(plum.util.data.plumData):
             self._last_logL = self._logL
         self._param_vec = param_array # could do this via a @property setter method instead
         assert len(self._param_vec) == len(self._free_params), "Why aren't parameter vector and free params same length"
-        self._paramD = dict(zip(self._free_params,self._param_vec)) # update main holder of parameters
+        self._paramD = dict(list(zip(self._free_params,self._param_vec))) # update main holder of parameters
         
         # use properties to update models (they parse self._paramD)
         self._error_model.updateParams(self.errorModelParams)
         self._markov_model.updateParams(self.markovModelParams)
-        self._state_priors = dict(zip(*self._markov_model.stationaryFrequencies))
+        self._state_priors = dict(list(zip(*self._markov_model.stationaryFrequencies)))
         
         self._siteLs = self._calc_L(self.tree,self._featureDs,self._blank_knownDs,
                                                         self._error_model,
@@ -132,7 +132,7 @@ class plumMCMC(plumLikelihood):
             self._prior_dists.update({"alpha":scipy.stats.uniform(0,50),"beta":scipy.stats.uniform(0,50)})
         else:
             self._prior_dists = priors # distributions
-        assert all(map(lambda x: x in self._paramD,(i for i in self._prior_dists))), "Priors {} don't match parameters {}".format(priors.keys(),self._paramD.keys())
+        assert all([x in self._paramD for x in (i for i in self._prior_dists)]), "Priors {} don't match parameters {}".format(list(priors.keys()),list(self._paramD.keys()))
         self._start_log_priors = {param: np.log( self._prior_dists[param].pdf(self._paramD[param]) ) for param in self._prior_dists}
         self._old_log_prior = None
         
@@ -182,10 +182,10 @@ class plumMCMC(plumLikelihood):
                 is_first = False
             else:
                 self.metropolis_hastings()
-            print gen
+            print(gen)
             gen += 1
             if gen % self.save_every == 0:
-                out.write(",".join([str(gen),str(self._logL)] + map(str,self._param_vec)) + "\n")
+                out.write(",".join([str(gen),str(self._logL)] + list(map(str,self._param_vec))) + "\n")
         out.close()
             
             
@@ -205,7 +205,7 @@ class plumML(plumLikelihood):
         ML = scipy.optimize.minimize(self._run_calc,self._param_vec,method="L-BFGS-B",bounds=self._param_boundVec,
                                         options={'maxiter':100,'disp':True})
         if ML.success:
-            self.ml_estimate = dict(zip(self._free_params,ML.x))
+            self.ml_estimate = dict(list(zip(self._free_params,ML.x)))
             self.results = ML
         else:
             self.failure = ML
@@ -293,7 +293,7 @@ class simulated_annealing(plumLikelihood):
         else:
             best_params, best_score = _simulated_annealing(self._run_calc, pvec, self._param_boundVec, 
                                                             self.start_temp, self.alpha, self.temp_steps, self.mutation_sd)
-        self.best_params = dict(zip(self.freeParams,best_params))
+        self.best_params = dict(list(zip(self.freeParams,best_params)))
         self.best_logL = best_score
         
         self._update_all(best_params) # final update turns model state to best parameters found during search

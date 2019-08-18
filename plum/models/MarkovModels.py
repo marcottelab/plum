@@ -65,13 +65,13 @@ class TwoState(Model):
         
         #initialize independent params
         self._params = {}
-        loader = dict(zip(['alpha','beta'],np.array([alpha,beta],dtype=np.float64)))# necessary so all parameter values go through updateParams
+        loader = dict(list(zip(['alpha','beta'],np.array([alpha,beta],dtype=np.float64))))# necessary so all parameter values go through updateParams
         self.updateParams(loader) # this will initialize dependent params
         
         # Do I want containers to track e.g. parameter updates?
         
     def __repr__(self):
-        return "plum.models.MarkovModels.TwoState({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.iteritems()) )
+        return "plum.models.MarkovModels.TwoState({})".format( ",".join("=".join([i,str(j)]) for i,j in self.freeParamDict.items()) )
         
     def __str__(self):
         return "plum.models.MarkovModels.TwoState"
@@ -114,14 +114,14 @@ class TwoState(Model):
         
     @paramBounds.setter
     def paramBounds(self,newbounds):
-        _ = [self._validateParam(p,value=None,bounds=bounds) for p,bounds in newbounds.iteritems()]
+        _ = [self._validateParam(p,value=None,bounds=bounds) for p,bounds in newbounds.items()]
         self._param_bounds.update(newbounds)
         
     def updateParams(self,newvalues):
         '''Update with new parameters.
             `newvalues` - a dictionary mapping parameter names to new values'''
         # update independent parameters
-        for name,val in newvalues.iteritems():
+        for name,val in newvalues.items():
             val = np.float64(val)
             self._validateParam(name,value=val)
             self._params[name] = val
@@ -229,7 +229,7 @@ class TwoStateGamma(TwoState):
         # update independent parameters
         update_rates = False
         update_matrix = False
-        for name,val in newvalues.iteritems():
+        for name,val in newvalues.items():
             if name in ['shape','rate']:
                 update_rates = True
             else:

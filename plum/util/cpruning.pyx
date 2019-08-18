@@ -9,6 +9,7 @@ import numpy as np
 cimport numpy as np
 cimport cython
 import pandas as pd
+from functools import reduce
 from libc.math cimport log, abs, isnan
 from collections import defaultdict
 

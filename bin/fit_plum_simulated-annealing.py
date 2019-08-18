@@ -36,7 +36,7 @@ if args.weight_errormodel_by_prior == True:
     assert args.criterion == 'recall-precision', "`weight_errormodel_by_prior` flag can only be used with criterion = recall-precision"
 
 ## Read in and create models
-print "Reading parameter file"
+print("Reading parameter file")
 em,mm = plum.util.data.get_models_from_file(args.paramfile)
 
 
@@ -51,7 +51,7 @@ if args.criterion == 'recall-precision':
                                                                 alpha=args.alpha,
                                                                 temp_steps=args.temp_steps,
                                                                 mutation_sd=args.mutation_sd)
-    print "Fitting model on {}".format(args.training_data)
+    print("Fitting model on {}".format(args.training_data))
     model.fit()
     fit_params = model.best_params
     best_score = model.best_aps
@@ -65,7 +65,7 @@ elif args.criterion == "likelihood":
                                                                 alpha=args.alpha,
                                                                 temp_steps=args.temp_steps,
                                                                 mutation_sd=args.mutation_sd)
-    print "Fitting model on {}".format(args.training_data)
+    print("Fitting model on {}".format(args.training_data))
     likelihood_model.fit()
     fit_params = likelihood_model.best_params
     best_score = likelihood_model.best_logL
@@ -83,7 +83,7 @@ else:
                                                                 alpha=args.alpha,
                                                                 temp_steps=args.temp_steps,
                                                                 mutation_sd=args.mutation_sd)
-    print "Fitting model on {}".format(args.training_data)
+    print("Fitting model on {}".format(args.training_data))
     likelihood_model.fit()
     fit_params = likelihood_model.best_params
     best_score = likelihood_model.best_classL
@@ -100,7 +100,7 @@ train_prc.to_csv(args.job_name + "_trainPRC" + ".csv", index=False)
 train_prc = None
 
 ## Test model on hold-out set
-print "Testing fitted model {} on test data".format(args.job_name)
+print("Testing fitted model {} on test data".format(args.job_name))
 fit_em = eval(str(em))(**model.errorModelParams)
 fit_mm = eval(str(mm))(**model.markovModelParams)
 

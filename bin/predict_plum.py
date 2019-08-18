@@ -20,10 +20,10 @@ args = parser.parse_args()
 
 
 ## Read in parameters
-print "Reading parameter file"
+print("Reading parameter file")
 em,mm = plum.util.data.get_models_from_file(args.paramfile)
     
 predictor = plum.predict.node_probabilities(markov_model=mm, error_model=em, tree=args.treefile, data=args.datafile, outfile=args.outfile, as_sorted=args.as_sorted)
 
-print "Predicting"
+print("Predicting")
 predictor.to_file()

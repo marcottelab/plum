@@ -25,19 +25,19 @@ else:
     
     
 # Read in data and drop down to knowns
-print "Reading {}".format(args.infile)
+print("Reading {}".format(args.infile))
 data = pd.read_csv(args.infile)
 
 
 if args.species_filter > 1:
-    print "Removing groups found in fewer than {} species".format(args.species_filter)
+    print("Removing groups found in fewer than {} species".format(args.species_filter))
     data = data.groupby(["ID1","ID2"]).filter( lambda x: len(x) > args.species_filter )
 
 assert "ids" not in data.columns
-data["ids"] = map(tuple,data[["ID1","ID2"]].values)
+data["ids"] = list(map(tuple,data[["ID1","ID2"]].values))
 knowns = data.dropna(subset=["state"])
 
-print "Reducing to known set"
+print("Reducing to known set")
 outdata = data[ data.ids.isin(knowns.ids) ]
 outdata.sort_values("ids", inplace=True)
 outdata.drop("ids", inplace=True, axis=1)

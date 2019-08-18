@@ -38,9 +38,9 @@ class plumRecallPrecision(plum.util.data.plumData):
         self._outputDF = None
         self._blank_knownDs = np.array( [{}] * len(self._featureDs) )
         
-        print "Initializing model"
+        print("Initializing model")
         self._update_all(self._param_vec) # calculate initial state
-        print "Finished initializing model"
+        print("Finished initializing model")
         
         self._precision_recall_dataframe = None
         self._results_dataframe = None
@@ -124,7 +124,7 @@ class plumRecallPrecision(plum.util.data.plumData):
             self._last_pairAncStates = self._pairAncStates.copy()
             self._last_aps = copy.deepcopy(self._aps)
         
-        for name,val in param_dict.iteritems():
+        for name,val in param_dict.items():
             assert name in self._paramD, "Invalid parameter name for this model: {}".format(name)
             self._paramD[name] = np.float64( val ) # this is only a good idea so far as *every* parameter should have this type
             
@@ -133,7 +133,7 @@ class plumRecallPrecision(plum.util.data.plumData):
         # use properties to update models (they parse self._paramD)
         self._error_model.updateParams(self.errorModelParams)
         self._markov_model.updateParams(self.markovModelParams)
-        self._state_priors = dict(zip(*self._markov_model.stationaryFrequencies))
+        self._state_priors = dict(list(zip(*self._markov_model.stationaryFrequencies)))
         
         # An empty dictionary is passed to knownD argument, so all labels in dataset will be
         # ignored. This is something that I could do differently
@@ -164,7 +164,7 @@ class plumRecallPrecision(plum.util.data.plumData):
         self._outID1, self._outID2 = [], []
         self._labels = []
         for index,nodeD in enumerate(self._knownLabelDs):
-            for taxon,label in nodeD.iteritems():
+            for taxon,label in nodeD.items():
                 if not pd.isnull(label):
                     try:
                        #prob = self._pairAncStates[index][taxon][1]
@@ -203,12 +203,12 @@ class plumRecallPrecision(plum.util.data.plumData):
             self._last_aps = copy.deepcopy(self._aps)
         self._param_vec = param_array # could do this via a @property setter method instead
         assert len(self._param_vec) == len(self._free_params), "Why aren't parameter vector and free params same length"
-        self._paramD = dict(zip(self._free_params,self._param_vec)) # update main holder of parameters
+        self._paramD = dict(list(zip(self._free_params,self._param_vec))) # update main holder of parameters
         
         # use properties to update models (they parse self._paramD)
         self._error_model.updateParams(self.errorModelParams)
         self._markov_model.updateParams(self.markovModelParams)
-        self._state_priors = dict(zip(*self._markov_model.stationaryFrequencies))
+        self._state_priors = dict(list(zip(*self._markov_model.stationaryFrequencies)))
         
         # An empty dictionary is passed to knownD argument, so all labels in dataset will be
         # ignored. This is something that I could do differently
@@ -363,10 +363,10 @@ class mcmc(plumRecallPrecision):
                 is_first = False
             else:
                 self.metropolis_hastings()
-            print gen
+            print(gen)
             gen += 1
             if gen % self.save_every == 0:
-                out.write(",".join([str(gen),str(self._aps)] + map(str,self._param_vec)) + "\n")
+                out.write(",".join([str(gen),str(self._aps)] + list(map(str,self._param_vec))) + "\n")
         out.close()
         
 class basinhopping(plumRecallPrecision):
@@ -390,10 +390,10 @@ class basinhopping(plumRecallPrecision):
     
     def fit(self):
         '''Fit the model by basin-hopping + L-BFGS-B'''
-        print "Fitting model by basinhopping"
+        print("Fitting model by basinhopping")
         self.results = scipy.optimize.basinhopping(self._run_calc,self._param_vec,disp=True,niter=self.n_iters, T=self.temp,
                         stepsize=self.stepsize,minimizer_kwargs={"method":"L-BFGS-B",'bounds':self._param_boundVec})
-        self.estimate = dict(zip(self._free_params,self.results.x))
+        self.estimate = dict(list(zip(self._free_params,self.results.x)))
         self.best_aps = 1 - self.results.fun
             
     def _run_calc(self,param_array):
@@ -478,7 +478,7 @@ class simulated_annealing(plumRecallPrecision):
         else:
             best_params, best_score = _simulated_annealing(self._run_calc, pvec, self._param_boundVec, 
                                                         self.start_temp, self.alpha, self.temp_steps, self.mutation_sd)
-        self.best_params = dict(zip(self.freeParams,best_params))
+        self.best_params = dict(list(zip(self.freeParams,best_params)))
         self.best_aps = best_score
         
         self._update_all(best_params) # final update turns model state to best parameters found during search
